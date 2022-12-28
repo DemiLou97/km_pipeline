@@ -1,0 +1,106 @@
+'''
+Demi@pussie demi@172.22.114.18 
+
+Z           z@172.22.114.8 
+
+'''
+
+###Download data : guidline 
+
+### DATA KEY METRICS 
+
+Download (manual/ automation) : lazada + shopee + Tiki  vào  : /download 
+
+--> chạy script_1.py để phân loại vào : /platform_lazada/buisness_advisor/raw
+                                        /platform_shopee/buisness_advisor/raw
+                                        /platform_tiki/buisness_advisor/raw
+
+##script_1.py 
+
+    *Phân tích cấu trúc data raw từng sàn để coding :   ### 5 if + elif + else                                    
+    
+    for i in /download : 
+
+    #   Lazada  + monthly 2022-01 : không có tên file, chỉ có số 
+                                    ==> trick : đổi bằng máy tính đi , lỗi lầm qk 
+                + daily 2022-02     laz_biz_2022-01-01_2022-01-31.xlsx  + đẩy vô trước 
+                                    laz_biz_2022-02-dd_.xlsx               
+
+                + daily           : tên file Business Advisor - Product - Performance  (1).xls 
+                                    ==> key : Business Advisor - Product - Performance 
+                                    laz_biz_YYYY-MM-DD đẩy vào /platform_lazada/buisness_advisor/raw
+        
+    #   shopee  + overall-monthly : tên file tefal_vn_official.shopee-shop-stats.20210101-20210131.xlsx 
+                                    ==> key : tefal_vn_official.shopee + date có sẵn
+                                    shp_biz_overall_YYYY-MM-DD_YYYY-MM-DD đẩy vào /platform_shopee/buisness_advisor/overall/raw        
+
+                + product-monthly : tên file export_report.parentskudetail.20220101_20220101.xlsx 
+                                    ==> key : export_report.parentskudetail + date có sẵn
+                                    shp_biz_product_YYYY-MM-DD_YYYY-MM-DD đẩy vào /platform_shopee/buisness_advisor/product/raw
+
+    #   tiki    + msb-monthly     : tên file SKU performance 20220101_20220131.xlsx
+                                    ==> key : SKU performance + date có sẵn
+                                    tiki_biz_msb_YYYY-MM-DD_YYYY-MM-DD đẩy vào /platform_tiki/buisness_advisor/msb/raw        
+
+                + seller center   : tên file Tefal.Official.Store.-.Chính.hãng.product-stats.20220101.20220101.xlsx
+                  -daily            ==> key : Tefal.Official.Store + date có sẵn
+                                    tiki_biz_seller-center_YYYY-MM đẩy vào /platform_shopee/buisness_advisor/seller-center/raw
+
+
+###a.py clean data + push to database 
+
+a.py : processing data commandline a.py --tag --path 
+
+# read data raw : dataframe
+
+# clean data 
+
+# to_excel 
+../platform_lazada/buisness_advisor/output :   file excel processing ==> push to database : local + remote(server z)
+../platform_shopee/buisness_advisor/output/
+../platform_tiki/buisness_advisor/output/
+
+func.py : function import to a.py
+
+# push to database append to database in mysql 
+
+### mysql 
+
+# How to access the remote database in mysql : 
+
+https://www.cyberciti.biz/faq/install-mysql-server-5-on-ubuntu-linux/
+
+server z : 172.22.114.8
+
+server client : 172.22.114.x 
+
+check user : 
+
+select user();
+
+select host from mysql.user where user='root/z/....
+
+select user from mysql.user;
+
+#At z  : 
+
+sudo mysql 
+
+create user 'z'@'172.22.114.x' identified by 'z';
+
+grant all privileges on * . * to 'z'@'172.22.114.x';
+
+flush privileges;
+
+#At client : 
+
+mysql -u z -p -h 172.22.114.8 
+
+    z : user of server z : create at z
+
+
+###script_2.py server demi rsync  ../data/.. to server z
+
+rsync -zavh data z@172.22.114.8:/home/z/Desktop/Demi/datapipeline
+
+https://www.redhat.com/sysadmin/ssh-automation-sshpass
